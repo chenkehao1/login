@@ -50,7 +50,7 @@ def purl(url):
         l = re.compile(par1).findall(data)
         g.append(l)
         #j = json.dumps(dict(g), ensure_ascii=False)
-    json.dump(g,open('D:/AuI18N/虎啸龙吟/12.txt','a'))
+    json.dump(g,open('D:/AuI18N/虎啸龙吟/12.txt', 'a'))
 
 
 
