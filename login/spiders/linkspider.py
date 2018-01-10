@@ -40,17 +40,17 @@ def purl(url):
     g = []
     #os.makedirs(os.path.join('D:\\AuI18N/', name))@创建保存评论链接和评论的储存路径
 
-    data = urllib.request.urlopen(url).read().decode('utf-8')
+    data = urllib.request.urlopen(url+'/discussion/').read().decode('utf-8')
     par = 'data-num="(..?)"'
     par1 = '<a href="(.*?)" title='
     s = re.compile(par).findall(data)#返回总共的剧集数
     print(len(s))
     for i in range(1, len(s)+1):
-        data = urllib.request.urlopen(url+'discussion/?ep_num='+str(i)).read().decode('utf-8')
+        data = urllib.request.urlopen(url+'/discussion/').read().decode('utf-8')
         l = re.compile(par1).findall(data)
         g.append(l)
         #j = json.dumps(dict(g), ensure_ascii=False)
-    json.dump(g,open('D:/AuI18N/虎啸龙吟/12.txt', 'a'))
+    json.dump(g,open('D:/AuI18N/虎啸龙吟/12.json', 'a'))
 
 
 
@@ -58,6 +58,7 @@ def purl(url):
 
 
 #将保存的字符串序列化为基本数据类型
-i=json.load(open('D:/AuI18N/虎啸龙吟/12.txt','r'))#格式化输出
+#i=json.load(open('D:/AuI18N/虎啸龙吟/12.json','r'))#格式化输出
+#print(i)
 
 
