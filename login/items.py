@@ -12,7 +12,7 @@ class LoginItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     name = scrapy.Field()
-    uesr = scrapy.Field()
+    user = scrapy.Field()
     url = scrapy.Field()
     hy = scrapy.Field()
     sj = scrapy.Field()
