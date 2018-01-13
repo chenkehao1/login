@@ -60,6 +60,5 @@ class LinkSpiderSpider(scrapy.Spider):
                         for c in range(0, len(b2)):
                             f.write(b2[c])
                 f.close()
-
             yield itme
 
