@@ -10,7 +10,7 @@ import codecs
 class LoginPipeline(object):
     def __init__(self):
         #刚开始链接时对应的数据库
-        self.f = codecs.open('D:/AuI18N/虎啸龙吟/3.json', 'wb', encoding='utf-8')
+        self.f = codecs.open('D:/AuI18N/虎啸龙吟/话题讨论.json', 'wb', encoding='utf-8')
     def process_item(self, item, spider):
         for j in range(0, len(item['url'])):
             name = item['name'][j]

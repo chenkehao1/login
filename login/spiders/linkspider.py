@@ -13,7 +13,7 @@ def oa():
     par1 = '"url":"(.*?)/"'
     par2 = '"rate":"(.*?)"'
     type1 = ['美剧', '英剧', '韩剧', '日剧', '国产剧', '港剧', '日本动画', '综艺', '纪录片']
-    with open('D:/AuI18N/1.json', 'w', encoding='utf-8')as f:
+    with open('D:/AuI18N/片库.csv', 'w', encoding='utf-8')as f:
         for i in range(0, len(type1)):
             t = []
             j = urllib.parse.quote(type1[i])
@@ -29,19 +29,22 @@ def oa():
                 name = list1[b]
                 url = t[b]
                 fs = list3[b]
-                g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
-                j = json.dumps(dict(g), ensure_ascii=False)
-                h = j+'\n'
+                #g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
+                #g = [b, name, url, fs, type1[i]]
+                #j = json.dumps(dict(g), ensure_ascii=False)
+                h =str(b)++'\n'
                 f.write(h)
 
 
 def jianso():
+    ku = {}
     with open('D:/AuI18N/1.json', 'r' ,encoding='utf-8')as f:
+        for line in f:
+            i = json.loads(line)
+            ku.update(i)
+    return ku
 
-        print(str(f))
 
-
-jianso()
 
 
 #purl('https://movie.douban.com/subject/27087788/')
