@@ -6,14 +6,17 @@ import re
 import json
 import urllib.parse
 import os
+import pymysql
 #更新剧库
 #在查找片库文件是，还是用正则匹配文件中的条目，然后把返回的值再用json格式化成字典，或者不格式化也可以，看哪种更简单效果更好
 def oa():
+    jis = 0
     par = '"title":"(.*?)"'
     par1 = '"url":"(.*?)/"'
     par2 = '"rate":"(.*?)"'
     type1 = ['美剧', '英剧', '韩剧', '日剧', '国产剧', '港剧', '日本动画', '综艺', '纪录片']
-    with open('D:/AuI18N/片库.csv', 'w', encoding='utf-8')as f:
+    with open('D:/AuI18N/片库.json', 'w', encoding='utf-8')as f:
+        f1 = pymysql.connect(host='127.0.0.1',user='root',passwd='root',db='ysku')
         for i in range(0, len(type1)):
             t = []
             j = urllib.parse.quote(type1[i])
@@ -26,15 +29,20 @@ def oa():
             for a in range(0, len(list2)):
                 t.append(list2[a].replace('\\', ''))
             for b in range(0, len(list1)):
-                name = list1[b]
-                url = t[b]
-                fs = list3[b]
-                #g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
-                #g = [b, name, url, fs, type1[i]]
-                #j = json.dumps(dict(g), ensure_ascii=False)
-                h =str(b)++'\n'
-                f.write(h)
-
+                #在写入数据库是name中如果出现英文逗号就会报错导致程序异常退出，所以这里加一段异常捕捉
+                try:
+                    name = list1[b]
+                    url = t[b]
+                    fs = list3[b]
+                    g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
+                    j = json.dumps(dict(g), ensure_ascii=False)
+                    h = j + '\n'
+                    f.write(h)
+                    sql = "insert into juji(id,name,fs,type) VALUES('"+str(jis)+"','"+name+"','"+fs+"','"+type1[i]+"')"
+                    f1.query(sql) #通过对应的sql语句实现写入数据库
+                    jis += 1
+                except Exception as e:
+                    print('exception:'+str(e))
 
 def jianso():
     ku = {}
