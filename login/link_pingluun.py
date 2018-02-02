@@ -3,7 +3,6 @@ import re
 import json
 
 
-
 #读取免费IP为列表
 def jiansuo1():
     ku = []
@@ -33,6 +32,7 @@ def jiansuo():
      return ku
 
 
+#清洗评论内容
 def qingxi():
     with open('D:/AuI18N/虎啸龙吟/评论.txt', 'r', encoding='utf-8') as f, open('D:/AuI18N/虎啸龙吟/评论31日.txt', 'w', encoding='utf-8') as f1:
         for lins in f:
@@ -40,8 +40,6 @@ def qingxi():
             new = new.replace('</p>', '')
             new = new.replace('</span>', '')
             f1.write(new)
-
-
 
 
 def main():
@@ -127,43 +125,6 @@ def main():
     f.close()
 
 
-
-
-
 if __name__ == '__main__':
-    qingxi()
+    main()
 
-
-
-
-
-
-
-
-
-
-'''
-headres = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1 QIHU 360SE '}
-
-for e in range(0, 601):
-    print('---------第'+str(e)+'次发送请求--------------------------------')
-    IP = {'https': ''}
-    print('剩余IP数量为'+str(len(t)))
-    if t == []:
-        ipchi.ipchi()
-        t = jiansuo2()
-        print('IP代理池更新完成')
-    try:
-        IP['https'] = 'http://'+t[0]
-        print(IP)
-        r = requests.get("https://movie.douban.com/subject/26898192", proxies=IP, headers=headres,timeout=30)
-        data = r.text
-        i = re.compile('<span property="v:itemreviewed">(.*?)</span>').findall(data)
-        if i == []:
-            print(data)
-        else:
-            print(i, '爬取成功')
-    except Exception as e:
-        del t[0]
-        print('exception'+str(e), '程序结束')
-'''
