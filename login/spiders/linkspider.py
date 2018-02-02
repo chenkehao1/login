@@ -7,7 +7,10 @@ import json
 import urllib.parse
 import os
 import csv
-
+import urllib.parse
+import http.cookiejar
+import time
+import numpy
 #更新剧库
 #在查找片库文件是，还是用正则匹配文件中的条目，然后把返回的值再用json格式化成字典，或者不格式化也可以，看哪种更简单效果更好
 def oa():
@@ -46,22 +49,8 @@ def oa():
                 except Exception as e:
                     print('exception:'+str(e))
 
-def jianso():
-    ku = {}
-    with open('D:/AuI18N/1.json', 'r' ,encoding='utf-8')as f:
-        for line in f:
-            i = json.loads(line)
-            ku.update(i)
-    return ku
 
 
 
-
-#purl('https://movie.douban.com/subject/27087788/')
-
-
-#将保存的字符串序列化为基本数据类型
-#i=json.load(open('D:/AuI18N/虎啸龙吟/12.json','r'))#格式化输出
-#print(i)
 
 

@@ -53,7 +53,9 @@ COOKIES_ENABLED = False
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'login.middlewares.MyCustomDownloaderMiddleware': 543,
+   # 'login.middlewares.MyCustomDownloaderMiddleware': 543,
+   # 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':123,
+    #'login.zhong.IPPOOLS':123
 #}
 
 # Enable or disable extensions
@@ -64,9 +66,9 @@ COOKIES_ENABLED = False
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'login.pipelines.LoginPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'login.pipelines.LoginPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
