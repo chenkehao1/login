@@ -4,64 +4,66 @@ from login.items import LoginItem
 from scrapy.http import Request
 import re
 import urllib.request
+import urllib.parse
+import http.cookiejar
 import time
-
 
 class LinkSpiderSpider(scrapy.Spider):
     name = 'link_spider'
     allowed_domains = ['douban.com']
-    url = ''
-    path = ''
+    url = 'https://movie.douban.com/subject/27087788'
+    path = '虎啸龙吟'
     #定义首次爬取网址
     def start_requests(self):
-        yield Request(self.url+'/discussion/',headers=
+        yield Request('https://movie.douban.com/subject/27087788/discussion/', headers=
         {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'})
+
     #评论循环计数器
     y = 0
 
     def parse(self, response):
-        itme = LoginItem()
+        item = LoginItem()
         #爬取评论总页数
         t = response.xpath('//*[@id="content"]/div/div[1]/div[3]/span[2]/@data-total-page').extract()
-        for i in range(0, int(t[0])):
-            #爬取话题标题和链接
-            self.y += 20
-            time.sleep(3)
-            data = urllib.request.urlopen(self.url+'/discussion/?start='+str(self.y)).read().decode('utf-8')
-            itme['name'] = re.compile('title="(.*?)"').findall(data)
-            itme['user'] = re.compile('<a href="https://www.douban.com/.*?" class="">([\s\S]*?)</td>').findall(data)
-            itme['url'] = re.compile('<a href="(.*?)" title="').findall(data)
-            itme['hy'] = re.compile('<td>(.*?)</td').findall(data)
-            itme['sj'] = re.compile(' <td class="time">(.*?)</td>').findall(data)
+        print(t)
+        url='https://www.douban.com/accounts/login'#'https://weibo.com/liuyifeiofficial?page=1'
+        p=urllib.parse.urlencode({
+        "form_email":'13792453017',
+        "form_password":'370284hao7'
+            }).encode('utf-8')
+        r=urllib.request.Request(url,p)
+        r.add_header=('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36')
+        c=http.cookiejar.CookieJar()
+        op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(c))
+        urllib.request.install_opener(op)
 
-            for ts in range(0, len(itme['url'])):
-                #爬取每一个讨论的内容和话题评论内容
-                time.sleep(4)
-                data1 = urllib.request.urlopen(itme['url'][ts]).read().decode('utf-8')
-                biaoti = re.compile('<span class="">([\s\S]*?)<br clear="all"/>').findall(data1)
-                huifu = re.compile('class="">(.*?)</p>') .findall(data1)
-                pye = re.compile('author=0#comments" >(.*?)</a>').findall(data1)
-                f = open('D:/AuI18N/'+self.path+'/评论.txt', 'a', encoding='utf-8')
+        try:
+            for i in range(0, int(t[0])):
 
-                #判断讨论标题如果为空就不写入标题直接进入回复评论的循环
-                if biaoti != []:
-                    f.write(biaoti[0])
+                #爬取话题标题和链接
 
-                 #写入话题评论的第一页的回复内容
-                for a in range(0, len(huifu)):
-                    f.write(huifu[a])
+                print(self.y)
+                r = urllib.request.Request(self.url+'/discussion/?start='+str(self.y),p)
+                r.add_header=('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36')
+                data = urllib.request.urlopen(r,timeout=5).read().decode('utf-8')
+                item['name'] = re.compile('title="(.*?)"').findall(data)
+                item['user'] = re.compile('<a href="https://www.douban.com/.*?" class="">([\s\S]*?)</td>').findall(data)
+                item['url'] = re.compile('<a href="(.*?)" title="').findall(data)
+                item['hy'] = re.compile('<td>([\d]*)</td').findall(data)
+                item['sj'] = re.compile(' <td class="time">(.*?) [\d]+:[\d]+</td>').findall(data)
+                self.y += 20
+                yield item
+        except Exception as e:
+            url='https://www.douban.com/accounts/login'#'https://weibo.com/liuyifeiofficial?page=1'
+            p=urllib.parse.urlencode({
+            "form_email":'13792453017',
+            "form_password":'370284hao7'
+                }).encode('utf-8')
+            r=urllib.request.Request(url,p)
+            r.add_header=('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36')
+            c=http.cookiejar.CookieJar()
+            op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(c))
+            urllib.request.install_opener(op)
+            print('exception'+str(e),'程序结束')
 
-                #如果话题评论有多页就循环爬取写入
-                if len(pye)+1 >= 2:
-                    bs = 0
-                    for b in range(0, len(pye)+1):
-                        time.sleep(5)
-                        bs += 100
-                        data2 = urllib.request.urlopen(itme['url'][ts]+'?start='+str(bs)).read().decode('utf-8')
-                        lint = re.compile('class="">(.*?)</p>').findall(data2)
-                        #循环提取回复内容并写入文件
-                        for c in range(0, len(lint)):
-                            f.write(lint[c])
-                f.close()
-            yield itme
 
