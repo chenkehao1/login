@@ -32,16 +32,6 @@ def jiansuo():
      return ku
 
 
-#清洗评论内容
-def qingxi():
-    with open('D:/AuI18N/虎啸龙吟/评论.txt', 'r', encoding='utf-8') as f, open('D:/AuI18N/虎啸龙吟/评论31日.txt', 'w', encoding='utf-8') as f1:
-        for lins in f:
-            new = lins.replace('<p>', '')
-            new = new.replace('</p>', '')
-            new = new.replace('</span>', '')
-            f1.write(new)
-
-
 def main():
     item = jiansuo()
     path = '虎啸龙吟'
@@ -63,7 +53,7 @@ def main():
             print(IP)
             r = requests.get(item[url], proxies=IP, headers=headres,timeout=40)
             data1 = r.text
-             #爬取每一个讨论的内容和话题评论内容
+            #爬取每一个讨论的内容和话题评论内容
 
             biaoti = re.compile('<span class="">([\s\S]*?)<br clear="all"/>').findall(data1)
             huifu = re.compile('class="">(.*?)</p>') .findall(data1)
@@ -118,6 +108,7 @@ def main():
             del t[0]
             print('exception'+str(e), '本次结束')
     f.close()
+    #下面这段是临时加的调试代码没什么大用处
     f = open('D:/AuI18N/过滤后IP.txt', 'w', encoding='utf-8')
     for i in range(len(g)):
         h = g[i] + '\n'
@@ -127,4 +118,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
