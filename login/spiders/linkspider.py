@@ -5,23 +5,17 @@ import urllib.request
 import re
 import json
 import urllib.parse
-import os
-import csv
-import urllib.parse
-import http.cookiejar
-import time
-import numpy
+import matplotlib.pyplot as plt
+import pandas
+from pylab import mpl
+
 #更新剧库
-#在查找片库文件是，还是用正则匹配文件中的条目，然后把返回的值再用json格式化成字典，或者不格式化也可以，看哪种更简单效果更好
 def oa():
-    jis = 0
     par = '"title":"(.*?)"'
     par1 = '"url":"(.*?)/"'
     par2 = '"rate":"(.*?)"'
     type1 = ['美剧', '英剧', '韩剧', '日剧', '国产剧', '港剧', '日本动画', '综艺', '纪录片']
-    with open('D:/AuI18N/pk.csv', 'w', encoding='utf-8')as f:
-        wr = csv.writer(f)
-        wr.writerow(('name', '评分', 'type'))
+    with open('D:/AuI18N/片库.json', 'w', encoding='utf-8')as f:
         for i in range(0, len(type1)):
             t = []
             j = urllib.parse.quote(type1[i])
@@ -31,26 +25,74 @@ def oa():
             list1 = re.compile(par).findall(data)
             list2 = re.compile(par1).findall(data)
             list3 = re.compile(par2).findall(data)
-            print(type1[i],len(list1))
+            print(type1[i], len(list1))
             for a in range(0, len(list2)):
                 t.append(list2[a].replace('\\', ''))
             for b in range(0, len(list1)):
-                #在写入数据库是name中如果出现英文逗号就会报错导致程序异常退出，所以这里加一段异常捕捉
-                try:
                     name = list1[b]
                     url = t[b]
                     fs = list3[b]
-                    #g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
-                    #j = json.dumps(dict(g), ensure_ascii=False)
-                    #h = j + '\n'
-                    #f.write(h)
-                    wr.writerow((jis, name, fs, type1[i]))
-                    jis += 1
-                except Exception as e:
-                    print('exception:'+str(e))
+                    g = {name: {'url': url, '评分': fs, 'type': type1[i]}}
+                    j = json.dumps(dict(g), ensure_ascii=False)
+                    h = j + '\n'
+                    f.write(h)
+
+
+#将剧种分类并计算平均分
+def jisuan():
+    j = {'美剧': '', '英剧': '', '韩剧': '', '日剧': '', '国产剧': '', '港剧': '', '日本动画': '', '综艺': '', '纪录片': ''}
+    with open('D:/AuI18N/片库.json', 'r', encoding='utf-8') as f:
+        for lint in f:
+            i = json.loads(lint)
+            for key in i:
+                if i[key]['type'] == '美剧':
+                    j['美剧'] = str(eval(j['美剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '英剧':
+                    j['英剧'] = str(eval(j['英剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '韩剧':
+                    j['韩剧'] = str(eval(j['韩剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '日剧':
+                    j['日剧'] = str(eval(j['日剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '国产剧':
+                    j['国产剧'] = str(eval(j['国产剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '港剧':
+                    j['港剧'] = str(eval(j['港剧'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '日本动画':
+                    j['日本动画'] = str(eval(j['日本动画'] +'+'+ i[key]['评分']))
+                elif i[key]['type'] == '综艺':
+                    j['综艺'] = str(eval(j['综艺'] +'+'+ i[key]['评分']))
+                else:
+                    j['纪录片'] = str(eval(j['纪录片'] +'+'+ i[key]['评分']))
+        for key in j:
+            if key == '英剧':
+                j[key] = round(eval(j[key] +'/'+ '397'), 2)
+                continue
+            j[key] = round(eval(j[key] +'/'+ '500'), 2)
+    return j
+
+
+#分析数据并作图
+def fenxi(fen, biaoqian):
+    mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei']   # 指定默认字体：解决plot不能显示中文问题
+    mpl.rcParams['axes.unicode_minus'] = False
+
+    data = pandas.Series(fen, index=biaoqian)
+    data.plot(kind='barh', grid=True, xticks=[1, 2, 3, 4, 5, 6, 7, 8, 9])
+    plt.show()
 
 
 
+def main():
+    i = jisuan()
+    fen = []
+    biaoqian = []
+    #循环遍历字典的键-值添加进列表
+    for key, value in i.items():
+        fen.append(value)
+        biaoqian.append(key)
+    fenxi(fen, biaoqian)
 
 
 
+if __name__ == '__main__':
+    main()
